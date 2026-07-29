@@ -27,11 +27,13 @@ Help / Documentation: http://<CyberMail-IP>/help/
 If a client machine is configured to use CyberMail-Server as its DNS server, the same pages can also be reached with:
 
 ```text
-Home page: http://mail.smartroad.com/
-Webmail: http://webmail.smartroad.com/
-Mail Admin: http://admin.smartroad.com/
-phpMyAdmin: http://phpmyadmin.smartroad.com/
+Home page: http://cybermail.test/
+Webmail: http://webmail.cybermail.test/
+Mail Admin: http://admin.cybermail.test/
+phpMyAdmin: http://phpmyadmin.cybermail.test/
 ```
+
+`mail.cybermail.test` is used as the mail host for MX, SMTP, and IMAP-related practice. It is not a web homepage.
 
 Use the full `http://` address because some browsers may try HTTPS first or treat local lab names as search terms.
 
@@ -44,7 +46,7 @@ Use the full `http://` address because some browsers may try HTTPS first or trea
 - Postfix for SMTP mail sending and receiving
 - Dovecot for IMAP mailbox access
 - MariaDB/MySQL for virtual mail accounts and web application databases
-- BIND 9 DNS server for the `smartroad.com` lab domain
+- BIND 9 DNS server for the `cybermail.test` lab domain
 - SSH for VM administration
 - SFTP over SSH for encrypted file transfer
 
@@ -55,7 +57,7 @@ Use the full `http://` address because some browsers may try HTTPS first or trea
 | Lighttpd | HTTP | `80/tcp` | Started | Home page, Roundcube, PostfixAdmin, phpMyAdmin |
 | SSH | SSH | `22/tcp` | Started | VM administration |
 | SFTP | SFTP over SSH | `22/tcp` | Started with SSH | Encrypted VM file transfer |
-| BIND | DNS | `53/tcp`, `53/udp` | Started | `smartroad.com` DNS resolution |
+| BIND | DNS | `53/tcp`, `53/udp` | Started | `cybermail.test` DNS resolution |
 | Postfix | SMTP | `25/tcp` | Started | Mail transfer |
 | Postfix Submission | SMTP AUTH | `587/tcp` | Started | Authenticated mail sending |
 | Dovecot | IMAP | `143/tcp` | Started | Mailbox access |
@@ -77,13 +79,13 @@ Default access:
 
 ```text
 http://<CyberMail-IP>/webmail/
-http://webmail.smartroad.com/
+http://webmail.cybermail.test/
 ```
 
 Example webmail account:
 
 ```text
-student@smartroad.com / hullu
+student@cybermail.test / hullu
 ```
 
 Use Roundcube to send and receive local lab email messages, inspect message headers, and practice basic phishing-awareness and mail-flow scenarios.
@@ -96,13 +98,13 @@ Default access:
 
 ```text
 http://<CyberMail-IP>/admin/
-http://admin.smartroad.com/
+http://admin.cybermail.test/
 ```
 
 Default login:
 
 ```text
-admin@smartroad.com / hullu
+admin@cybermail.test / hullu
 ```
 
 PostfixAdmin is focused on mail account administration. It does not manage all Postfix, Dovecot, DNS, firewall, or system service settings.
@@ -115,7 +117,7 @@ Default access:
 
 ```text
 http://<CyberMail-IP>/phpmyadmin/
-http://phpmyadmin.smartroad.com/
+http://phpmyadmin.cybermail.test/
 ```
 
 Default login:
@@ -128,30 +130,32 @@ MariaDB is intended for local VM use and is not exposed as a public network serv
 
 ## DNS
 
-CyberMail-Server includes BIND 9 for the local `smartroad.com` lab domain. The DNS records are automatically updated to the current VM IP during boot.
+CyberMail-Server includes BIND 9 for the local `cybermail.test` lab domain. The DNS records are automatically updated to the current VM IP during boot.
 
 Main DNS file:
 
 ```text
-/etc/bind/zones/db.smartroad.com
+/etc/bind/zones/db.cybermail.test
 ```
 
 Default lab records include:
 
 ```text
-smartroad.com
-mail.smartroad.com
-webmail.smartroad.com
-admin.smartroad.com
-phpmyadmin.smartroad.com
+cybermail.test
+mail.cybermail.test
+webmail.cybermail.test
+admin.cybermail.test
+phpmyadmin.cybermail.test
 ```
+
+`mail.cybermail.test` is included for email routing and mail-client configuration. Use `cybermail.test` for the home page and `webmail.cybermail.test` for Roundcube.
 
 If a client machine uses CyberMail-Server as its DNS server, test the lab domain:
 
 ```sh
-dig @<CyberMail-IP> smartroad.com A
-dig @<CyberMail-IP> mail.smartroad.com A
-dig @<CyberMail-IP> smartroad.com MX
+dig @<CyberMail-IP> cybermail.test A
+dig @<CyberMail-IP> mail.cybermail.test A
+dig @<CyberMail-IP> cybermail.test MX
 ```
 
 CyberMail-Server forwards external DNS lookups to:
@@ -161,42 +165,42 @@ CyberMail-Server forwards external DNS lookups to:
 1.1.1.1
 ```
 
-For deeper DNS record editing practice, use a dedicated DNS lab VM such as [Hullu](https://github.com/kaledaljebur/hullu) and create or modify the `smartroad.com` zone there.
+For deeper DNS record editing practice, use a dedicated DNS lab VM such as [Hullu](https://github.com/kaledaljebur/hullu) and create or modify the `cybermail.test` zone there.
 
 ### Using Hullu or Another DNS Server
 
-If you do not use CyberMail-Server as the DNS server, add a new `smartroad.com` zone to [Hullu](https://github.com/kaledaljebur/hullu) or to the external DNS server you are using. Do not add these records inside the existing `hullu.lab` zone.
+If you do not use CyberMail-Server as the DNS server, add a new `cybermail.test` zone to [Hullu](https://github.com/kaledaljebur/hullu) or to the external DNS server you are using. Do not add these records inside the existing `hullu.lab` zone.
 
 Replace `<CyberMail-IP>` with the current CyberMail-Server address. Replace `<DNS-Server-IP>` with the IP address of Hullu or the external DNS server.
 
 In Hullu DNS Lab, open `named.conf` and add this zone block:
 
 ```conf
-zone "smartroad.com" IN {
+zone "cybermail.test" IN {
     type master;
-    file "/var/bind/pri/smartroad.com.zone";
+    file "/var/bind/pri/cybermail.test.zone";
 };
 ```
 
 Then create or edit this zone file on Hullu:
 
 ```text
-/var/bind/pri/smartroad.com.zone
+/var/bind/pri/cybermail.test.zone
 ```
 
 Use this zone content:
 
 ```zone
 $TTL 1H
-@       IN      SOA     ns1.smartroad.com. admin.smartroad.com. (
+@       IN      SOA     ns1.cybermail.test. admin.cybermail.test. (
                         2026073001
                         1H
                         15M
                         1W
                         1H )
 
-@           IN  NS      ns1.smartroad.com.
-@           IN  MX      10 mail.smartroad.com.
+@           IN  NS      ns1.cybermail.test.
+@           IN  MX      10 mail.cybermail.test.
 
 @           IN  A       <CyberMail-IP>
 ns1         IN  A       <DNS-Server-IP>
@@ -209,12 +213,12 @@ phpmyadmin  IN  A       <CyberMail-IP>
 Minimum records needed for the web links and email routing:
 
 ```text
-smartroad.com             A    <CyberMail-IP>
-mail.smartroad.com        A    <CyberMail-IP>
-webmail.smartroad.com     A    <CyberMail-IP>
-admin.smartroad.com       A    <CyberMail-IP>
-phpmyadmin.smartroad.com  A    <CyberMail-IP>
-smartroad.com             MX   mail.smartroad.com
+cybermail.test             A    <CyberMail-IP>
+mail.cybermail.test        A    <CyberMail-IP>
+webmail.cybermail.test     A    <CyberMail-IP>
+admin.cybermail.test       A    <CyberMail-IP>
+phpmyadmin.cybermail.test  A    <CyberMail-IP>
+cybermail.test             MX   mail.cybermail.test
 ```
 
 In Hullu DNS Lab, run:
@@ -227,9 +231,9 @@ Apply DNS
 After applying DNS, set the client machine DNS server to Hullu or the external DNS server IP, then test:
 
 ```sh
-dig @<DNS-Server-IP> webmail.smartroad.com A
-dig @<DNS-Server-IP> admin.smartroad.com A
-dig @<DNS-Server-IP> smartroad.com MX
+dig @<DNS-Server-IP> webmail.cybermail.test A
+dig @<DNS-Server-IP> admin.cybermail.test A
+dig @<DNS-Server-IP> cybermail.test MX
 ```
 
 ## IP Configuration
@@ -276,10 +280,10 @@ Then restart networking or reboot:
 rc-service networking restart
 ```
 
-After changing the VM IP, CyberMail-Server updates the console banner and `smartroad.com` DNS records automatically at boot. You can also run the updater manually:
+After changing the VM IP, CyberMail-Server updates the console banner and `cybermail.test` DNS records automatically at boot. You can also run the updater manually:
 
 ```sh
-/usr/local/sbin/update-smartroad-dns-ip
+/usr/local/sbin/update-cybermail-dns-ip
 /usr/local/sbin/update-cybermail-banner
 ```
 
@@ -363,8 +367,8 @@ Example checks from Kali:
 
 ```sh
 nmap -sV -p22,25,53,80,143,587,993 <CyberMail-IP>
-dig @<CyberMail-IP> smartroad.com MX
-dig @<CyberMail-IP> webmail.smartroad.com A
+dig @<CyberMail-IP> cybermail.test MX
+dig @<CyberMail-IP> webmail.cybermail.test A
 ```
 
 ## Default Credentials
@@ -372,8 +376,8 @@ dig @<CyberMail-IP> webmail.smartroad.com A
 ```text
 VM console: root / hullu
 SSH/SFTP: root / hullu
-Mail Admin: admin@smartroad.com / hullu
-Webmail example user: student@smartroad.com / hullu
+Mail Admin: admin@cybermail.test / hullu
+Webmail example user: student@cybermail.test / hullu
 phpMyAdmin: pmauser / hullu_db_pmauser
 MariaDB root: root / hullu
 ```
