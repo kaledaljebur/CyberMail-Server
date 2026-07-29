@@ -165,28 +165,45 @@ For deeper DNS record editing practice, use a dedicated DNS lab VM such as [Hull
 
 ### Using Hullu or Another DNS Server
 
-If you do not use CyberMail-Server as the DNS server, add the `smartroad.com` zone to [Hullu](https://github.com/kaledaljebur/hullu) or to the external DNS server you are using.
+If you do not use CyberMail-Server as the DNS server, add a new `smartroad.com` zone to [Hullu](https://github.com/kaledaljebur/hullu) or to the external DNS server you are using. Do not add these records inside the existing `hullu.lab` zone.
 
-Replace `<CyberMail-IP>` with the current CyberMail-Server address.
+Replace `<CyberMail-IP>` with the current CyberMail-Server address. Replace `<DNS-Server-IP>` with the IP address of Hullu or the external DNS server.
+
+In Hullu DNS Lab, open `named.conf` and add this zone block:
+
+```conf
+zone "smartroad.com" IN {
+    type master;
+    file "/var/bind/pri/smartroad.com.zone";
+};
+```
+
+Then create or edit this zone file on Hullu:
+
+```text
+/var/bind/pri/smartroad.com.zone
+```
+
+Use this zone content:
 
 ```zone
-$TTL 86400
-@   IN  SOA ns1.smartroad.com. admin.smartroad.com. (
-        2026073001 ; Serial
-        3600       ; Refresh
-        1800       ; Retry
-        604800     ; Expire
-        86400 )    ; Minimum TTL
+$TTL 1H
+@       IN      SOA     ns1.smartroad.com. admin.smartroad.com. (
+                        2026073001
+                        1H
+                        15M
+                        1W
+                        1H )
 
-@           IN  NS   ns1.smartroad.com.
-@           IN  MX   10 mail.smartroad.com.
+@           IN  NS      ns1.smartroad.com.
+@           IN  MX      10 mail.smartroad.com.
 
-@           IN  A    <CyberMail-IP>
-ns1         IN  A    <DNS-Server-IP>
-mail        IN  A    <CyberMail-IP>
-webmail     IN  A    <CyberMail-IP>
-admin       IN  A    <CyberMail-IP>
-phpmyadmin  IN  A    <CyberMail-IP>
+@           IN  A       <CyberMail-IP>
+ns1         IN  A       <DNS-Server-IP>
+mail        IN  A       <CyberMail-IP>
+webmail     IN  A       <CyberMail-IP>
+admin       IN  A       <CyberMail-IP>
+phpmyadmin  IN  A       <CyberMail-IP>
 ```
 
 Minimum records needed for the web links and email routing:
@@ -200,7 +217,14 @@ phpmyadmin.smartroad.com  A    <CyberMail-IP>
 smartroad.com             MX   mail.smartroad.com
 ```
 
-After adding the records, set the client machine DNS server to Hullu or the external DNS server IP, then test:
+In Hullu DNS Lab, run:
+
+```text
+Check Config
+Apply DNS
+```
+
+After applying DNS, set the client machine DNS server to Hullu or the external DNS server IP, then test:
 
 ```sh
 dig @<DNS-Server-IP> webmail.smartroad.com A
