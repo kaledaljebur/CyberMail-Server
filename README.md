@@ -109,6 +109,41 @@ admin@cybermail.test / hullu
 
 PostfixAdmin is focused on mail account administration. It does not manage all Postfix, Dovecot, DNS, firewall, or system service settings.
 
+### Creating a New Mailbox
+
+In PostfixAdmin, open:
+
+```text
+Virtual List -> Add Mailbox
+```
+
+For a mailbox such as `david@cybermail.test`:
+
+- Enter `david` as the username
+- Select `cybermail.test` as the domain
+- Enter the password twice
+- Optionally enter the full name and quota
+- Leave `Active` enabled
+- Click `Add Mailbox`
+
+Default mailbox password requirements:
+
+```text
+Minimum length: 5 characters
+Letters: at least 3
+Digits: at least 2
+```
+
+Examples that pass:
+
+```text
+Password11!
+Hullu2026!
+Student99
+```
+
+`Password1!` does not pass because it contains only one digit.
+
 ## phpMyAdmin
 
 phpMyAdmin is included for database administration practice.
