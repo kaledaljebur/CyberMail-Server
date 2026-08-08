@@ -4,6 +4,10 @@ CyberMail-Server is a lightweight Alpine Linux virtual machine for cybersecurity
 
 Do not expose this VM as a real public mail server. Use it only in a private lab network.
 
+## Screenshot
+
+![alt text](CyberMail.png)
+
 ## Download
 
 The CyberMail-Server OVA image is available from SourceForge:
